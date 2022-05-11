@@ -7,18 +7,28 @@ public class NpcAmarillo extends AutoNpc {
 		this.posicionX = 150;
 		this.posicionY = -200;
 		this.velocidad = 30; // ejemplo 30px por segundo?
+		this.destruido = true;
 	}
 
 	@Override
 	public void realizarChoque(AutoNpc c) {
 		c.recibirChoque();
 		this.velocidad = 0;
-
+		
 	}
 
 	@Override
 	public void recibirChoque() {
-		this.velocidad = 0;
+		if (!destruido) {
+			this.velocidad = 0;
+			destruido = true;
+		}
+	}
+
+	@Override
+	public void moverse() {
+		// TODO Auto-generated method stub
+		
 	}
 
 }

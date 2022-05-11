@@ -7,6 +7,7 @@ public class NpcRojo extends AutoNpc {
 		this.posicionX = 150;
 		this.posicionY = -200;
 		this.velocidad = 20;
+		this.destruido = true;
 	}
 
 	@Override
@@ -18,6 +19,15 @@ public class NpcRojo extends AutoNpc {
 
 	@Override
 	public void recibirChoque() {
-		this.velocidad = 0;
+		if (!destruido) {
+			this.velocidad = 0;
+			destruido = true;
+		}
+	}
+
+	@Override
+	public void moverse() {
+		// TODO Auto-generated method stub
+		
 	}
 }
