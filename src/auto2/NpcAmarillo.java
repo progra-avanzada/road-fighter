@@ -13,22 +13,14 @@ public class NpcAmarillo extends AutoNpc {
 	@Override
 	public void realizarChoque(AutoNpc c) {
 		c.recibirChoque();
-		this.velocidad = 0;
-		
+		velocidad = 0;
 	}
 
 	@Override
 	public void recibirChoque() {
 		if (!destruido) {
-			this.velocidad = 0;
+			velocidad = 0;
 			destruido = true;
 		}
 	}
-
-	@Override
-	public void moverse() {
-		// TODO Auto-generated method stub
-		
-	}
-
 }

@@ -24,10 +24,4 @@ public class NpcRojo extends AutoNpc {
 			destruido = true;
 		}
 	}
-
-	@Override
-	public void moverse() {
-		// TODO Auto-generated method stub
-		
-	}
 }
