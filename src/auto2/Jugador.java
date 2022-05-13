@@ -13,4 +13,22 @@ public class Jugador {
 		puntos = 0;
 		puestoPartida = 0;
 	}
+	
+	public void darPuntos( int puntos) {
+		this.puntos += puntos;
+	}
+	
+	public int getPuntos () {
+		return puntos;
+	}
+	
+	public void setPosicion( int puesto) {
+		this.puestoPartida = puesto;
+	}
+	
+	public int getPuesto() {
+		return puestoPartida;
+	}
+	
+	
 }

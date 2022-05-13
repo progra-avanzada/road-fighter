@@ -14,9 +14,14 @@ public class Partida {
 	
 	public void calcularResultados()
 	{
-		//Aca recorremos la lista de jugadores y asignamos los puntos
+		//Es un dato que nos tiene que dar el mapa
 	}
 	
-	public void iniciar(){}
-	public void finalizar(){}
+	public void iniciar(){
+		//Falta interaccion con el mapa
+	}
+	
+	public void finalizar(){
+		//Falta interaccion con el mapa
+	}
 }
