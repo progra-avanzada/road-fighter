@@ -4,8 +4,8 @@ import static org.junit.Assert.*;
 
 import org.junit.Test;
 
-import auto2.NpcAmarillo;
-import auto2.NpcRojo;
+import main.NpcAmarillo;
+import main.NpcRojo;
 
 public class TestAutoNpc {
 
