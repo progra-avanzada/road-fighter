@@ -6,10 +6,10 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-import auto2.Auto;
-import auto2.AutoNpc;
-import auto2.Estado;
-import auto2.NpcAmarillo;
+import main.Auto;
+import main.AutoNpc;
+import main.Estado;
+import main.NpcAmarillo;
 
 public class TestAuto {
 

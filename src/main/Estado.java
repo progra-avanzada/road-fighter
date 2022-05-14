@@ -1,4 +1,4 @@
-	package auto2;
+	package main;
 
 public class Estado {
 	private String nombreEstado;

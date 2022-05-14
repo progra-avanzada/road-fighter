@@ -1,4 +1,4 @@
-package auto2;
+package main;
 
 public abstract class AutoNpc {
 
