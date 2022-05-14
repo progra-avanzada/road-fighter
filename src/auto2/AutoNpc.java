@@ -9,6 +9,7 @@ public abstract class AutoNpc {
 	protected boolean destruido;
 
 	public abstract void realizarChoque(AutoNpc a);
+	public abstract void realizarChoque(Auto a);
 
 	public abstract void recibirChoque();
 	
@@ -16,7 +17,7 @@ public abstract class AutoNpc {
 		return color;
 	}
 
-	public void setColor(String color) {
+	public void setColor(String color) { 
 		this.color = color;
 	}
 

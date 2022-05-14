@@ -46,4 +46,11 @@ public class Auto{
 		estado.setEstadoChocado();
 	} 
 	
+	public void destruirse() {
+		estado.setEstadoExplotado();
+	}
+	
+	public String getNombreEstado() {
+		return estado.getEstado();
+	}
 }
