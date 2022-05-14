@@ -24,4 +24,9 @@ public class NpcRojo extends AutoNpc {
 			destruido = true;
 		}
 	}
+	
+	@Override
+	public void realizarChoque(Auto c) {
+		c.destruirse();
+	}
 }

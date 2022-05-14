@@ -1,4 +1,4 @@
-package auto2;
+	package auto2;
 
 public class Estado {
 	private String nombreEstado;
@@ -34,4 +34,8 @@ public class Estado {
 		return tiempoInactividad;
 	}
 
+	public String getEstado() {
+		return nombreEstado;
+	}
+	
 }
