@@ -1,4 +1,4 @@
-package main;
+package roadfighter.objects;
 
 public class Jugador {
 	private int id;

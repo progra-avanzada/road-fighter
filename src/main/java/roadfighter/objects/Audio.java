@@ -1,4 +1,4 @@
-package main;
+package roadfighter.objects;
 
 import java.io.File;
 

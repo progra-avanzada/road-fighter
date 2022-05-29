@@ -1,15 +1,10 @@
-package test;
-
-import static org.junit.Assert.*;
-
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-
-import main.Auto;
-import main.AutoNpc;
-import main.Estado;
-import main.NpcAmarillo;
+import roadfighter.objects.Auto;
+import roadfighter.objects.AutoNpc;
+import roadfighter.objects.Estado;
+import roadfighter.objects.NpcAmarillo;
 
 public class TestAuto {
 

@@ -1,4 +1,4 @@
-package main;
+package roadfighter.objects;
 
 public abstract class AutoNpc {
 

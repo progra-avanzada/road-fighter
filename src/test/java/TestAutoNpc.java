@@ -1,11 +1,10 @@
-package test;
-
-import static org.junit.Assert.*;
+package test.java;
 
 import org.junit.Test;
+import roadfighter.objects.NpcAmarillo;
+import roadfighter.objects.NpcRojo;
 
-import main.NpcAmarillo;
-import main.NpcRojo;
+import static org.junit.Assert.assertTrue;
 
 public class TestAutoNpc {
 

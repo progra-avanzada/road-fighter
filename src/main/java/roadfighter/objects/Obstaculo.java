@@ -1,4 +1,4 @@
-package roadFighter;
+package roadfighter.objects;
 
 public class Obstaculo implements Comparable<Obstaculo> {
 	private int posicionX;
@@ -34,7 +34,7 @@ public class Obstaculo implements Comparable<Obstaculo> {
 
 	public void efecto(Auto auto) {
 		auto.frenar();
-		auto.moverseHorizontal(Math.random());
+		auto.moverseHorizontal((int) Math.random());
 		// El auto se movera horizontalmente, la clase Auto definira si choca con el
 		// borde del mapa o otro auto.
 

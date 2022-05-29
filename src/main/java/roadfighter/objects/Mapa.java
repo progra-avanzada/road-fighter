@@ -1,4 +1,4 @@
-package roadFighter;
+package roadfighter.objects;
 
 import java.util.ArrayList;
 import java.util.Collections;

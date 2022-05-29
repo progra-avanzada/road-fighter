@@ -1,8 +1,7 @@
-import static org.junit.Assert.*;
-
 import org.junit.Test;
+import roadfighter.objects.Audio;
 
-import Clases.Audio;
+import static org.junit.Assert.assertTrue;
 
 public class Testeos {
 
