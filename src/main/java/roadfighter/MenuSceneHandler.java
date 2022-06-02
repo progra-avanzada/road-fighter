@@ -70,7 +70,7 @@ public class MenuSceneHandler extends SceneHandler {
 		
 		player = new Jugador(Config.baseWidth - 75, Config.baseHeight / 3, null, new Auto("",new Estado("activo", 0)));
 		
-		background = new Background();
+		background = new StaticBackground("img/pantalla-titulo.png");
 		ground = new Ground();
 		fpsInfo = new FpsInfo(fps);
 

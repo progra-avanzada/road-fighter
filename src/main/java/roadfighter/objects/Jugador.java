@@ -97,7 +97,7 @@ public class Jugador extends GameObject implements Updatable, Renderable, Collid
 
     private void initImages() {
        // imageUp = new Image("file:src/main/resources/img/flappy-bird-up.png", width, height, false, false);
-        imageBase = new Image("file:src/main/resources/img/flappy-bird.png", width, height, false, false);
+        imageBase = new Image("file:src/main/resources/img/autito.png", width, height, false, false);
         //imageDown = new Image("file:src/main/resources/img/flappy-bird-down.png", width, height, false, false);
 
         Color[] original = {Color.rgb(247, 182, 67), Color.rgb(215, 229, 204), Color.rgb(208, 48, 21),

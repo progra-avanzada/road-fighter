@@ -86,7 +86,7 @@ public class GameSceneHandler extends SceneHandler {
 		
 		score = new Score();
 		player = new Jugador(Config.playerCenter, Config.baseHeight / 2, score, new Auto("",new Estado("activo", 0)));
-		background = new Background();
+		background = new StaticBackground("img/pantalla-titulo.png");
 		ground = new Ground();
 		//pipeBuilder = new PipeBuilder();
 		fpsInfo = new FpsInfo(fps);
