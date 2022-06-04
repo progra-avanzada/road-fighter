@@ -41,7 +41,7 @@ public class Score extends GameObject implements Renderable {
 		// Esto debería heredarse?
 		render.setPrefWidth(Config.baseWidth);
 
-		pointAudio = AudioResources.getPointAudio();
+		pointAudio = AudioResources.getCoinsAudio();
 
 		Font font = Font.loadFont(ClassLoader.getSystemResource("font/flappy-bird-numbers.ttf").toString(), 50);
 		scoreText.setTextAlignment(TextAlignment.CENTER);

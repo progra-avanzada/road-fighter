@@ -3,6 +3,7 @@ package road_fighter.objects;
 import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.ImagePattern;
@@ -57,35 +58,35 @@ public class Road extends GameObject implements Updatable, Renderable, Collideab
 
 		render = new VBox(groupRoad);
 		render.setTranslateX(posX);
-		render.setViewOrder(2);
+		render.setViewOrder(3);
 
 		/// Salida
-		Image backgroundImage1S = new Image("file:src/main/resources/PNG/Tiles/Asphalt road/road_asphalt21.png", width,
+		Image backgroundImage1S = new Image("file:src/main/resources/PNG/Tiles/Asphalt road/road_asphalt69.png", width,
 				height, false, false);
-		Image backgroundImage2S = new Image("file:src/main/resources/PNG/Tiles/Asphalt road/road_asphalt22.png", width,
+		Image backgroundImage2S = new Image("file:src/main/resources/PNG/Tiles/Asphalt road/road_asphalt70.png", width,
 				height, false, false);
-		Image backgroundImage3S = new Image("file:src/main/resources/PNG/Tiles/Asphalt road/road_asphalt23.png", width,
+		Image backgroundImage3S = new Image("file:src/main/resources/PNG/Tiles/Asphalt road/road_asphalt71.png", width,
 				height, false, false);
 
-		ImagePattern image_pattern1S = new ImagePattern(backgroundImage1S, width, height, width, height, false);
-		ImagePattern image_pattern2S = new ImagePattern(backgroundImage2S, width, height, width, height, false);
-		ImagePattern image_pattern3S = new ImagePattern(backgroundImage3S, width, height, width, height, false);
+		ImageView roadLeftS = new ImageView(backgroundImage1S);
+		ImageView roadCenterS = new ImageView(backgroundImage2S);
+		ImageView roadRightS = new ImageView(backgroundImage3S);
 
-		Rectangle roadLeftS = new Rectangle(width, Config.baseHeight + height);
-		Rectangle roadCenterS = new Rectangle(width, Config.baseHeight + height);
-		Rectangle roadRightS = new Rectangle(width, Config.baseHeight + height);
+//		Rectangle roadLeftS = new Rectangle(width, Config.baseHeight + height);
+//		Rectangle roadCenterS = new Rectangle(width, Config.baseHeight + height);
+//		Rectangle roadRightS = new Rectangle(width, Config.baseHeight + height);
 		roadCenterS.setX(width);
 		roadRightS.setX(width * 2);
-		roadLeftS.setFill(image_pattern1S);
-		roadCenterS.setFill(image_pattern2S);
-		roadRightS.setFill(image_pattern3S);
+//		roadLeftS.setFill(image_pattern1S);
+//		roadCenterS.setFill(image_pattern2S);
+//		roadRightS.setFill(image_pattern3S);
 
 		Group groupRoadS = new Group();
 		groupRoadS.getChildren().add(roadLeftS);
 		groupRoadS.getChildren().add(roadCenterS);
 		groupRoadS.getChildren().add(roadRightS);
 
-		groupRoadS.setTranslateY(-height);
+		groupRoadS.setTranslateY(Config.baseHeight - height);
 
 		renderSalida = new VBox(groupRoadS);
 		renderSalida.setTranslateX(posX);

@@ -20,6 +20,9 @@ public class BarrelBuilder extends GameObject implements Updatable {
 		if (running) {
 			long currentNano = System.nanoTime();
 
+//			if(distancia == Obstaculos)
+//				createBarrel();
+			
 			if (currentNano - barrelTime > 0 && Config.baseSpeed > 0) {
 				barrelTime = currentNano + (long) (Config.barrelsPerSecond * NANOS_IN_SECOND);
 				createBarrel();
@@ -40,8 +43,8 @@ public class BarrelBuilder extends GameObject implements Updatable {
 		double random = Math.random();
 
 //		int bordeIzquierdo = 572;
-		int bordeIzquierdo = Config.roadLeft;
-		int bordeDerecho = Config.roadRight;
+//		int bordeIzquierdo = Config.roadLeft;
+//		int bordeDerecho = Config.roadRight;
 		
 //		int posBarrel = (int) (random * (bordeDerecho * 2 + 1 - bordeIzquierdo) + bordeIzquierdo);
 		int posBarrel = (int) (480 + random * (Config.baseWidth - 220));

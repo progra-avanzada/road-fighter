@@ -10,7 +10,9 @@ import javafx.scene.paint.Color;
 import road_fighter.objects.Background;
 import road_fighter.objects.Car;
 import road_fighter.objects.FpsInfo;
+import road_fighter.objects.GPS;
 import road_fighter.objects.Road;
+import road_fighter.objects.Speedometer;
 //import road_fighter.objects.Ground;
 import road_fighter.objects.menu.TextoComenzar;
 import road_fighter.objects.menu.Title;
@@ -72,7 +74,9 @@ public class MenuSceneHandler extends SceneHandler {
 		Group baseGroup = new Group();
 		rootGroup.getChildren().add(baseGroup);
 		
-		player = new Car(Config.baseWidth/2 + 220, Config.baseHeight / 3, null, false);
+		Speedometer speedometer = new Speedometer();
+		GPS gps = new GPS();
+		player = new Car(Config.baseWidth/2 + 220, Config.baseHeight / 3, null, speedometer, gps, false);
 		
 		background = new Background();
 		road = new Road();

@@ -28,6 +28,8 @@ public class Car extends GameObject implements Updatable, Renderable, Collidator
 	private final double ROTATION_SPEED = 250;
 
 	private Score score;
+	private Speedometer speedometer;
+	private GPS gps;
 
 	private final int width = 31;
 	private final int height = 71;
@@ -97,17 +99,19 @@ public class Car extends GameObject implements Updatable, Renderable, Collidator
 	private final IndividualSpriteAnimation explosionAnimation;
 	private final Duration translateDuration = Duration.millis(1000);
 	private boolean isComputer = false;
+	
 
-	public Car(int x, int y, Score score, boolean computer) {
+	public Car(int x, int y, Score score, Speedometer speedometer, GPS gps, boolean computer) {
 		posY = y;
 		posX = x;
 		this.score = score;
+		this.speedometer = speedometer;
+		this.gps = gps;
 		this.isComputer  = computer;
 
 		initImages();
 		initAudios();
 		render = new ImageView(imageBase);
-//		render.relocate(posX - width / 2, 0);
 		render.setViewOrder(1);
 
 		collider = new Rectangle(posX - colliderWidth / 2, posY - colliderHeight / 2, colliderWidth, colliderHeight);
@@ -250,6 +254,10 @@ public class Car extends GameObject implements Updatable, Renderable, Collidator
 		setY(posY + velY * deltaTime);
 
 		if (!dead) {
+			if(Config.baseSpeed > 0)
+				Config.distanciaActual += (Config.baseSpeed / 2) / 20;
+			gps.update();
+			speedometer.update();
 			int direction = directionLeft ? -1 : (directionRight ? 1 : 0);
 			setX(posX + direction * Config.baseSpeed * deltaTime);
 			if(isComputer)

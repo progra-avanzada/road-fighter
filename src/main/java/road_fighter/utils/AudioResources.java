@@ -32,4 +32,8 @@ public final class AudioResources {
 		return create("sfx/screeching_tires.wav");
 	}
 	
+	public static AudioClip getCoinsAudio() {
+		return create("sfx/coins.wav");
+	}
+	
 }

@@ -8,11 +8,13 @@ import road_fighter.objects.Background;
 import road_fighter.objects.BarrelBuilder;
 import road_fighter.objects.Car;
 import road_fighter.objects.FpsInfo;
+import road_fighter.objects.GPS;
 //import road_fighter.objects.Ground;
 //import road_fighter.objects.PipeBuilder;
 //import road_fighter.objects.Radio;
 import road_fighter.objects.Road;
 import road_fighter.objects.Score;
+import road_fighter.objects.Speedometer;
 import road_fighter.utils.GameObjectBuilder;
 import javafx.animation.TranslateTransition;
 import javafx.event.EventHandler;
@@ -30,20 +32,19 @@ import javafx.util.Duration;
 public class GameSceneHandler extends SceneHandler {
 	
 	private Car player;
+	private Car player1;
 	private Background background;
-//	private Ground ground;
 	private Road road;
 	private BarrelBuilder barrelBuilder;
-//	private PipeBuilder pipeBuilder;
 	private Score score;
+	private Speedometer speedometer;
+	private GPS gps;
 	private FpsInfo fpsInfo;
-//	private Radio radio;
 
 	// TODO pause
 	// boolean paused = false;
 	boolean started = false;
 	boolean ended = false;
-	private Car player1;
 
 	public GameSceneHandler(RoadFighterGame g) {
 		super(g);
@@ -180,8 +181,10 @@ public class GameSceneHandler extends SceneHandler {
 		scene.setRoot(rootGroup);
 		
 		score = new Score();
-		player = new Car(Config.playerCenter, Config.playerHeight, score, false);
-		player1 = new Car(Config.playerCenter + 128, Config.playerHeight, score, true);
+		speedometer = new Speedometer();
+		gps = new GPS();
+		player = new Car(Config.playerCenter, Config.playerHeight, score, speedometer, gps , false);
+//		player1 = new Car(Config.playerCenter + 128, Config.playerHeight, score, true);
 		player.stopRotationAnimation();
 		background = new Background();
 		road = new Road();
@@ -192,7 +195,7 @@ public class GameSceneHandler extends SceneHandler {
 		// Add to builder
 		GameObjectBuilder gameOB = GameObjectBuilder.getInstance();
 		gameOB.setRootNode(rootGroup);
-		gameOB.add(background, road, score, fpsInfo, player, barrelBuilder);
+		gameOB.add(background, road, score, speedometer, gps, fpsInfo, player, barrelBuilder);
 		
 		/// PRUEBA BOT
 //		gameOB.add(background, road, score, fpsInfo, player, player1, barrelBuilder);
@@ -216,16 +219,16 @@ public class GameSceneHandler extends SceneHandler {
 		ended = false;
 		started = false;
 		Config.baseSpeed = 0;
+		Config.distanciaActual = 0;
 	}
 
 	private void makeActionStart() {
 		if (!started) {
 			started = true;
-//			pipeBuilder.startBuilding(2 * NANOS_IN_SECOND);
 			barrelBuilder.startBuilding(2 * NANOS_IN_SECOND);
 			player.stopRotationAnimation();
 			Config.baseSpeed = 0;
-//			radio.start();
+			Config.distanciaActual = 0;
 		}
 	}
 //	
@@ -250,6 +253,7 @@ public class GameSceneHandler extends SceneHandler {
 //				pipeBuilder.stopBuilding();
 				barrelBuilder.stopBuilding();
 				Config.baseSpeed = 0;
+				Config.distanciaActual = 0;
 
 				// Improve
 				TranslateTransition tt = new TranslateTransition(Duration.millis(50), scene.getRoot());
