@@ -1,67 +1,95 @@
 package road_fighter.objects;
 
+import java.util.ArrayList;
+
 import road_fighter.Config;
 import road_fighter.interfaces.Updatable;
 import road_fighter.utils.GameObject;
 import road_fighter.utils.GameObjectBuilder;
 
 public class BarrelBuilder extends GameObject implements Updatable {
-	private final long NANOS_IN_SECOND = 1_000_000_000;
+//	private final long NANOS_IN_SECOND = 1_000_000_000;
+
+	private int[][] obstaculos;
+
+	private ArrayList<ArrayList<Barrel>> barrelsPerPlayer;
+	private ArrayList<ArrayList<ScoreCollider>> scoreCollidersPerPlayer;
+	private ArrayList<Player> jugadores;
+
+	private int cantObstaculos = 0;
 
 	private boolean running = false;
-	private long barrelTime;
 
-	public BarrelBuilder() {
+	public BarrelBuilder(ArrayList<Player> listPlayers) {
+//		this.posX = posX;
+		jugadores = listPlayers;
+
+		obstaculos = new int[1000][2];
+		barrelsPerPlayer = new ArrayList<ArrayList<Barrel>>();
+		scoreCollidersPerPlayer = new ArrayList<ArrayList<ScoreCollider>>();
+
+		for (int i = 0; i < jugadores.size(); i++) {
+			barrelsPerPlayer.add(new ArrayList<Barrel>());
+			scoreCollidersPerPlayer.add(new ArrayList<ScoreCollider>());
+		}
+
+		for (int i = Config.startObstacles; i < Config.distanciaMax; i += Config.distancePerBarrel) {
+			double random = Math.random();
+
+			int posX = (int) (random * (Config.roadWidth - Config.platformWidth - Config.barrelSize));
+			obstaculos[cantObstaculos][0] = posX;
+			obstaculos[cantObstaculos][1] = i;
+			cantObstaculos++;
+		}
 
 	}
 
 	@Override
 	public void update(double deltaTime) {
-		if (running) {
-			long currentNano = System.nanoTime();
 
-//			if(distancia == Obstaculos)
-//				createBarrel();
-			
-			if (currentNano - barrelTime > 0 && Config.baseSpeed > 0) {
-				barrelTime = currentNano + (long) (Config.barrelsPerSecond * NANOS_IN_SECOND);
-				createBarrel();
+		if (running) {
+
+			for (int j = 0; j < jugadores.size(); j++) {
+
+				double distanciaJugador = jugadores.get(j).getCar().getDistanciaRecorrida();
+
+				for (int i = 0; i < cantObstaculos; i++) {
+
+					if ((obstaculos[i][1] - distanciaJugador) < 540 && barrelsPerPlayer.get(j).size() < i) {
+
+						createObstacles(obstaculos[i][0] + jugadores.get(j).getRoadPositionX() + Config.platformWidth,
+								obstaculos[i][1], j);
+					}
+				}
+
+				for (int i = 0; i < barrelsPerPlayer.get(j).size(); i++) {
+					barrelsPerPlayer.get(j).get(i).updateBarrel(jugadores.get(j).getCar().getSpeed(), deltaTime);
+					scoreCollidersPerPlayer.get(j).get(i).update(jugadores.get(j).getCar().getSpeed(), deltaTime);
+				}
 			}
 		}
 	}
 
 	public void startBuilding(long delayInNano) {
 		running = true;
-		this.barrelTime = System.nanoTime() + delayInNano;
 	}
 
 	public void stopBuilding() {
 		running = false;
 	}
 
-	public void createBarrel() {
-		double random = Math.random();
+	public void createObstacles(int x, int distancia, int perteneceAJugador) {
 
-//		int bordeIzquierdo = 572;
-//		int bordeIzquierdo = Config.roadLeft;
-//		int bordeDerecho = Config.roadRight;
-		
-//		int posBarrel = (int) (random * (bordeDerecho * 2 + 1 - bordeIzquierdo) + bordeIzquierdo);
-		int posBarrel = (int) (480 + random * (Config.baseWidth - 220));
-		
-//		int totalHeight = Config.baseHeight - Config.groundHeight;
-//		int emptySpace = (int) (totalHeight * Config.emptySpace);
-//		int topPipeHeight = (int) (50 + random * (Config.baseHeight - 400));
-//		int x = (int) (Config.baseWidth * 1.2);
-
-		Barrel barrel = new Barrel(posBarrel);
-//		Pipe bottomPipe = new Pipe(x, topPipeHeight, false);
-		ScoreCollider scoreCollider = new ScoreCollider(-10);
-//		GameObjectBuilder.getInstance().add(topPipe, bottomPipe, scoreCollider);
+		Barrel barrel = new Barrel(x, distancia);
+		ScoreCollider scoreCollider = new ScoreCollider(jugadores.get(perteneceAJugador).getRoadPositionX());
 		GameObjectBuilder.getInstance().add(barrel, scoreCollider);
+		barrelsPerPlayer.get(perteneceAJugador).add(barrel);
+		scoreCollidersPerPlayer.get(perteneceAJugador).add(scoreCollider);
+
 	}
-	
+
 	@Override
-	public void destroy() {	}
-	
+	public void destroy() {
+	}
+
 }

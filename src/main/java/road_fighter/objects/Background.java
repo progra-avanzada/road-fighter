@@ -13,23 +13,24 @@ import javafx.scene.shape.Rectangle;
 
 public class Background extends GameObject implements Updatable, Renderable {
 	private VBox render;
-//	private double posX = 0;
-	private double posY = 0;
+	private double posX = 0;
+//	private double posY = 0;
 
-	private final int cityWidth = 800;
-	private final int cityHeight = 600;
+	private final int cityWidth = Config.baseWidth;
+	private final int cityHeight = Config.baseHeight;
 //	private final int grassHeight = 100;
 
 	public Background() {
 		Image backgroundImage = new Image(
-				"file:src/main/resources/img/background1.jpg", cityWidth, cityHeight, false, false);
+//				"file:src/main/resources/img/background1.jpg", cityWidth, cityHeight, false, false);
+		"file:src/main/resources/img/city.jfif", cityWidth, cityHeight, false, false);
 
 		ImagePattern image_pattern = new ImagePattern(
 				backgroundImage, 0, 0, cityWidth, cityHeight,
 				false);
 
 //		Rectangle sky = new Rectangle(Config.baseWidth + cityWidth, Config.baseHeight - cityHeight - grassHeight);
-		Rectangle city = new Rectangle(cityWidth, Config.baseWidth + cityHeight);
+		Rectangle city = new Rectangle(cityWidth * 2, cityHeight);
 //		Rectangle grass = new Rectangle(Config.baseWidth + cityWidth, grassHeight);
 //
 //		sky.setFill(Color.rgb(84, 192, 201));
@@ -49,10 +50,10 @@ public class Background extends GameObject implements Updatable, Renderable {
 
 	@Override
 	public void update(double deltaTime) {
-//		posX += -Config.baseSpeed * deltaTime * 0.01;
-//		render.setTranslateX(posX % cityWidth);
-		posY += -Config.baseSpeed * deltaTime * 0.01;
-		render.setTranslateY(posY % cityWidth);
+		posX += -500 * deltaTime * 0.01;
+		render.setTranslateX(posX % cityWidth);
+//		posY += -500 * deltaTime * 0.01;
+//		render.setTranslateY(posY % cityWidth);
 	}
 
 	@Override

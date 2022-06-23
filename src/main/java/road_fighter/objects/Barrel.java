@@ -3,7 +3,6 @@ package road_fighter.objects;
 import road_fighter.Config;
 import road_fighter.interfaces.Collideable;
 import road_fighter.interfaces.Renderable;
-import road_fighter.interfaces.Updatable;
 import road_fighter.utils.GameObject;
 import road_fighter.utils.GameObjectBuilder;
 import javafx.scene.image.Image;
@@ -14,58 +13,66 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.Shape;
 
-public class Barrel extends GameObject implements Updatable, Renderable, Collideable {
+public class Barrel extends GameObject implements Renderable, Collideable {
 	private double posX;
-	private double posY;
+	private double posY = 0;
+	private final int posDistancia;
 
-	private final int width;
+
 //	@SuppressWarnings("unused")
-	private final int height = 0;
-	private final int imageWidth = 56;
-	private final int imageHeight = 56;
-	private final int offScreenTolerance = 50;
+	private final int imageSize = Config.barrelSize;
+	private final int offScreenTolerance = imageSize;
 
 	private VBox render;
 	private Rectangle collider;
 
-	public Barrel(int width) {
-		this.width = width;
+	public Barrel(int posX, int distancia) {
+
+		this.posX = posX;
+		this.posDistancia = distancia;
 
 		Image barrel;
-		barrel = new Image("file:src/main/resources/PNG/Objects/barrel_blue.png", imageWidth, imageHeight, false, false);
+		barrel = new Image("file:src/main/resources/PNG/Objects/barrel_blue.png", imageSize, imageSize, false, false);
 		ImageView imageView = new ImageView(barrel);
 		render = new VBox(imageView);
 
 		render.setViewOrder(1);
 
-		collider = new Rectangle(width, -imageHeight, imageWidth, imageHeight);
+		collider = new Rectangle(0, 0, imageSize, imageSize);
 		collider.setFill(null);
 		collider.setStroke(Color.FUCHSIA);
 		collider.setStrokeWidth(2);
-		
-		setPosX(width);
+
+		setPosX(posX);
+	}
+
+	public int getPosDistancia() {
+		return posDistancia;
 	}
 
 	public double getPosX() {
 		return posX;
 	}
 
-	private void setPosX(double posX) {
-		this.posX = posX;
-		render.setTranslateX(posX - width / 2);
-		collider.setX(posX - width / 2);
-	}
-	
-	private void setPosY(double posY) {
-		this.posY = posY;
-		render.setTranslateY(posY - height / 2);
-		collider.setY(posY - height / 2);
+	public double getPosY() {
+		return posY;
 	}
 
-	@Override
-	public void update(double deltaTime) {
-//		setPosX(posX + -Config.baseSpeed * deltaTime);
-		setPosY(posY + Config.baseSpeed * deltaTime);
+	private void setPosX(double posX) {
+		this.posX = posX;
+		render.setTranslateX(posX);
+		collider.setX(posX);
+	}
+
+	public void setPosY(double posY) {
+		this.posY = posY;
+		render.setTranslateY(posY - imageSize / 2);
+		collider.setY(posY - imageSize / 2);
+	}
+
+	public void updateBarrel(double velocidad, double deltaTime) {
+		
+		setPosY(posY + velocidad * deltaTime);
 
 		if (isOffScreen()) {
 			GameObjectBuilder.getInstance().remove(this);
@@ -78,15 +85,16 @@ public class Barrel extends GameObject implements Updatable, Renderable, Collide
 	}
 
 	public boolean isOffScreen() {
-		return posX + width < -offScreenTolerance;
+		return posY - Config.baseHeight > offScreenTolerance;
 	}
 
 	@Override
 	public Shape getCollider() {
 		return collider;
 	}
-	
+
 	@Override
-	public void destroy() {	}
-	
+	public void destroy() {
+	}
+
 }

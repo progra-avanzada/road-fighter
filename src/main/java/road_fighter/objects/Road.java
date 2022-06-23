@@ -15,10 +15,10 @@ import road_fighter.interfaces.Renderable;
 import road_fighter.interfaces.Updatable;
 import road_fighter.utils.GameObject;
 
-public class Road extends GameObject implements Updatable, Renderable, Collideable {
-	private double width = 128;
-	private double height = 128;
-	private double posX = (Config.baseWidth - width * 3) / 2;
+public class Road extends GameObject implements Renderable, Collideable {
+	private double width = Config.sizeRoadImage;
+	private double height = Config.sizeRoadImage;
+	private double posX;
 	private double posY = 0;
 
 	private VBox render;
@@ -28,7 +28,9 @@ public class Road extends GameObject implements Updatable, Renderable, Collideab
 	private Rectangle colliderLeft;
 	private Rectangle colliderRight;
 
-	public Road() {
+	public Road(int posX) {
+
+		this.posX = posX;
 		Image backgroundImage1 = new Image("file:src/main/resources/PNG/Tiles/Asphalt road/road_asphalt21.png", width,
 				height, false, false);
 		Image backgroundImage2 = new Image("file:src/main/resources/PNG/Tiles/Asphalt road/road_asphalt22.png", width,
@@ -57,7 +59,7 @@ public class Road extends GameObject implements Updatable, Renderable, Collideab
 		groupRoad.setTranslateY(-height);
 
 		render = new VBox(groupRoad);
-		render.setTranslateX(posX);
+		render.setTranslateX(this.posX);
 		render.setViewOrder(3);
 
 		/// Salida
@@ -101,12 +103,15 @@ public class Road extends GameObject implements Updatable, Renderable, Collideab
 		return render;
 	}
 
-	@Override
-	public void update(double deltaTime) {
+	public void update(double deltaTime, double speed) {
 //		if(Config.distanciaActual == 0)
-			
-		posY += Config.baseSpeed * deltaTime;
+
+		posY += speed * deltaTime;
 		render.setTranslateY(posY % height);
+	}
+
+	public void setPosY(double posY) {
+		this.posY = posY;
 	}
 
 	@Override

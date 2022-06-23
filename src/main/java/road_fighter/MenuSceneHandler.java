@@ -74,12 +74,14 @@ public class MenuSceneHandler extends SceneHandler {
 		Group baseGroup = new Group();
 		rootGroup.getChildren().add(baseGroup);
 		
-		Speedometer speedometer = new Speedometer();
-		GPS gps = new GPS();
-		player = new Car(Config.baseWidth/2 + 220, Config.baseHeight / 3, null, speedometer, gps, false);
+		Speedometer speedometer = new Speedometer(Config.barPlayer1);
+		GPS gps = new GPS(Config.barPlayer1);
+		road = new Road(Config.posXRoadPlayer1);
+		player = new Car(Config.baseWidth/2 + 400, Config.baseHeight / 3, road, null, speedometer, gps, false);
+		player.playRotationAnimation();
 		
 		background = new Background();
-		road = new Road();
+//		road = new Road();
 		fpsInfo = new FpsInfo(fps);
 
 		title = new Title();
@@ -87,7 +89,9 @@ public class MenuSceneHandler extends SceneHandler {
 
 		GameObjectBuilder gameOB = GameObjectBuilder.getInstance();
 		gameOB.setRootNode(baseGroup);
-		gameOB.add(background, player, road, title, textoComenzar, fpsInfo);
+		gameOB.add(background, player, 
+//				road,
+				title, textoComenzar, fpsInfo);
 
 		if (fullStart) {
 			addTimeEventsAnimationTimer();

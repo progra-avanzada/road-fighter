@@ -5,10 +5,10 @@ import javafx.animation.Animation;
 import javafx.animation.TranslateTransition;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
+import javafx.scene.effect.DropShadow;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
-import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
 import javafx.util.Duration;
@@ -30,14 +30,16 @@ public class Title extends GameObject implements Renderable {
 		render = new VBox(text);
 		render.setAlignment(Pos.CENTER);
 		render.setTranslateY(Y);
-//		render.setTranslateX(50);
-		// Esto debería heredarse?
 		render.setPrefWidth(Config.baseWidth);
 
-		Font font = Font.font("Verdana", FontWeight.EXTRA_BOLD, 50);
+		Font font = Font.loadFont(ClassLoader.getSystemResource("font/road-fighter.ttf").toString(), 70);
 		text.setTextAlignment(TextAlignment.CENTER);
 		text.setFont(font);
-		text.setFill(Color.DARKRED);
+		text.setFill(Color.BLACK);
+		
+		DropShadow ds = new DropShadow();
+		ds.setColor(Color.WHITE);
+		text.setEffect(ds);
 		
 		idleAnimation = initIdleAnimation();
 	}

@@ -16,54 +16,59 @@ import javafx.scene.text.TextAlignment;
 
 public class GPS extends GameObject implements Renderable {
 	private final int Y = Config.playerHeight / 2;
+	private final int posX;
 	private int height = 90;
-	private int km = 0;
+	private double km = 0;
 
 	private Text kmText;
 	private Text text;
 	private VBox render;
 	private Rectangle cuadro;
 
-	public GPS() {
-		text = new Text("METROS RESTANTES:");
+	public GPS(int posX) {
+		this.posX = posX;
+
+		text = new Text("METROS\nRESTANTES:");
 		text.setY(Y - 70);
 		text.setX(10);
-		
-		kmText = new Text("" + Config.baseSpeed / 2);
+
+		kmText = new Text("" + km);
 		kmText.setY(Y - 10);
-		kmText.setX(20);
-		
-		cuadro = new Rectangle(Config.roadLeft - 20, height);
+		kmText.setX(5);
+
+		cuadro = new Rectangle(Config.sizeBar - 10, height);
 		cuadro.setFill(Color.BLACK);
 		cuadro.setY(Y - 90);
 		cuadro.setViewOrder(3);
-		
+
 		Group group = new Group();
 		group.getChildren().add(text);
 		group.getChildren().add(kmText);
 		group.getChildren().add(cuadro);
-		
+
 		render = new VBox(group);
 		render.setSpacing(5);
 		render.setAlignment(Pos.CENTER_LEFT);
 		render.setTranslateY(Y);
+		render.setTranslateX(this.posX);
 		// Esto debería heredarse?
 		render.setPrefWidth(Config.baseWidth);
 
-		Font font = Font.loadFont(ClassLoader.getSystemResource("font/flappy-bird-numbers.ttf").toString(), 40);
-		kmText.setTextAlignment(TextAlignment.CENTER);
+		Font font = Font.loadFont(ClassLoader.getSystemResource("font/road-fighter.ttf").toString(), 23);
+		kmText.setTextAlignment(TextAlignment.LEFT);
 		kmText.setFont(font);
 		kmText.setFill(Color.WHITE);
-		
-		Font font1 = Font.loadFont(ClassLoader.getSystemResource("font/road-fighter.ttf").toString(), 11);
+
+		Font font1 = Font.loadFont(ClassLoader.getSystemResource("font/road-fighter.ttf").toString(), 13);
 		text.setTextAlignment(TextAlignment.CENTER);
 		text.setFont(font1);
 		text.setFill(Color.WHITE);
 
 		DropShadow ds = new DropShadow();
-		ds.setColor(Color.WHITE);
+		ds.setColor(Color.RED);
 		kmText.setEffect(ds);
-		
+		text.setEffect(ds);
+
 	}
 
 	@Override
@@ -71,17 +76,18 @@ public class GPS extends GameObject implements Renderable {
 		return render;
 	}
 
-	public void increase() {
-		this.update();
+//	public void increase() {
+//		this.update();
+//	}
+
+	public double getGPS() {
+
+		return km;
 	}
 
-	public int getSpeed() {
-		return (int) Config.baseSpeed;
-	}
-
-	public void update() {
-		km = Config.distanciaMax - Config.distanciaActual;
-		kmText.setText("" + km);
+	public void update(double distanciaRecorrida) {
+		km = Math.round((Config.distanciaMax - distanciaRecorrida) * 100.0 / 1000) / 100.0;
+		kmText.setText(km + " Km");
 	}
 
 	@Override

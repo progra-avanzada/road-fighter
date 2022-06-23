@@ -24,29 +24,31 @@ public class Speedometer extends GameObject implements Renderable {
 	private VBox render;
 	private Rectangle cuadro;
 
-	public Speedometer() {
+	public Speedometer(int posX) {
+
 		text = new Text("VELOCIMETRO:");
 		text.setY(Y - 70);
 		text.setX(10);
-		
-		speedText = new Text("" + Config.baseSpeed / 2);
+
+		speedText = new Text("" + speed);
 		speedText.setY(Y - 10);
 		speedText.setX(10);
-		
-		cuadro = new Rectangle(Config.roadLeft - 30, height);
+
+		cuadro = new Rectangle(Config.sizeBar, height);
 		cuadro.setFill(Color.BLACK);
 		cuadro.setY(Y - 90);
 		cuadro.setViewOrder(3);
-		
+
 		Group group = new Group();
 		group.getChildren().add(text);
 		group.getChildren().add(speedText);
 		group.getChildren().add(cuadro);
-		
+
 		render = new VBox(group);
 		render.setSpacing(5);
 		render.setAlignment(Pos.CENTER_LEFT);
 		render.setTranslateY(Y);
+		render.setTranslateX(posX);
 		// Esto debería heredarse?
 		render.setPrefWidth(Config.baseWidth);
 
@@ -62,7 +64,7 @@ public class Speedometer extends GameObject implements Renderable {
 		DropShadow ds = new DropShadow();
 		ds.setColor(Color.WHITE);
 		speedText.setEffect(ds);
-		
+
 	}
 
 	@Override
@@ -70,16 +72,16 @@ public class Speedometer extends GameObject implements Renderable {
 		return render;
 	}
 
-	public void increase() {
-		this.update();
-	}
+//	public void increase() {
+//		this.update();
+//	}
 
 	public int getSpeed() {
-		return (int) Config.baseSpeed;
+		return speed;
 	}
 
-	public void update() {
-		speed = (int) Config.baseSpeed / 2;
+	public void update(double currentSpeed) {
+		speed = (int) currentSpeed / 2;
 		speedText.setText("" + speed);
 	}
 

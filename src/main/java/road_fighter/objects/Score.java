@@ -8,7 +8,6 @@ import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
 import javafx.animation.Timeline;
-import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.layout.VBox;
@@ -20,7 +19,7 @@ import javafx.scene.text.TextAlignment;
 import javafx.util.Duration;
 
 public class Score extends GameObject implements Renderable {
-	private final int Y = 15;
+	private final int Y = 20;
 	private int score = 0;
 
 	private Text scoreText;
@@ -30,13 +29,15 @@ public class Score extends GameObject implements Renderable {
 	private Animation zoomAnimation;
 	private AudioClip pointAudio;
 
-	public Score() {
+	public Score(int posX) {
+		
 		scoreText = new Text("" + score);
 		maxScoreText = new Text("TOP: " + Config.maxScore);
 
 		render = new VBox(maxScoreText, scoreText);
 		render.setSpacing(5);
-		render.setAlignment(Pos.TOP_CENTER);
+//		render.setAlignment(Pos.TOP_CENTER);
+		render.setTranslateX(posX + 30);
 		render.setTranslateY(Y);
 		// Esto debería heredarse?
 		render.setPrefWidth(Config.baseWidth);
@@ -46,12 +47,17 @@ public class Score extends GameObject implements Renderable {
 		Font font = Font.loadFont(ClassLoader.getSystemResource("font/flappy-bird-numbers.ttf").toString(), 50);
 		scoreText.setTextAlignment(TextAlignment.CENTER);
 		scoreText.setFont(font);
-		scoreText.setFill(Color.BLACK);
+		scoreText.setFill(Color.WHITE);
 		
-		maxScoreText.setFont(Font.font("MONOSPACE", 15));
+//		maxScoreText.setFont(Font.font("MONOSPACE", 15));
+		Font font1 = Font.loadFont(ClassLoader.getSystemResource("font/road-fighter.ttf").toString(), 15);
+		maxScoreText.setTextAlignment(TextAlignment.CENTER);
+		maxScoreText.setFont(font1);
+		maxScoreText.setFill(Color.WHITE);
+		
 
 		DropShadow ds = new DropShadow();
-		ds.setColor(Color.WHITE);
+		ds.setColor(Color.RED);
 		scoreText.setEffect(ds);
 	}
 
@@ -85,8 +91,8 @@ public class Score extends GameObject implements Renderable {
 	public void updateHighScore() {
 		if (this.score > Config.maxScore) {
 			Config.maxScore = this.score;
-			maxScoreText.setText("TOP: " + Config.maxScore);
 		}
+		maxScoreText.setText("TOP: " + Config.maxScore);
 	}
 
 	@Override

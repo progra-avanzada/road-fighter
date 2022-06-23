@@ -23,14 +23,13 @@ public class TextoComenzar extends GameObject implements Renderable {
 
 		render = new VBox(text);
 		render.setAlignment(Pos.TOP_CENTER);
-		render.setTranslateY(Y);
-		// Esto debería heredarse?
 		render.setPrefWidth(Config.baseWidth);
 
-		Font font = Font.font("Verdana", FontWeight.NORMAL, 40);
+		render.setTranslateY(Y);
+		Font font = Font.loadFont(ClassLoader.getSystemResource("font/GAMERIA.ttf").toString(), 50);
 		text.setTextAlignment(TextAlignment.CENTER);
 		text.setFont(font);
-		text.setFill(Color.BLACK);
+		text.setFill(Color.GHOSTWHITE);
 	}
 
 	@Override

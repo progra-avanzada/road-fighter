@@ -7,11 +7,13 @@ import road_fighter.interfaces.Renderable;
 import road_fighter.interfaces.Updatable;
 import road_fighter.utils.AudioResources;
 import road_fighter.utils.GameObject;
+import road_fighter.utils.GameObjectBuilder;
 import road_fighter.utils.IndividualSpriteAnimation;
 import road_fighter.utils.SpriteAnimation;
 //import road_fighter.utils.Utils;
 import javafx.animation.Animation;
 import javafx.animation.RotateTransition;
+import javafx.animation.SequentialTransition;
 //import javafx.geometry.Rectangle2D;
 //import javafx.animation.TranslateTransition;
 import javafx.scene.image.Image;
@@ -23,10 +25,8 @@ import javafx.scene.shape.Shape;
 import javafx.util.Duration;
 
 public class Car extends GameObject implements Updatable, Renderable, Collidator {
-	private final double ROTATION_FREE_FALL = 20;
-	private final double ROTATION_THRESHOLD = 0.6;
-	private final double ROTATION_SPEED = 250;
 
+	private Road road;
 	private Score score;
 	private Speedometer speedometer;
 	private GPS gps;
@@ -35,22 +35,31 @@ public class Car extends GameObject implements Updatable, Renderable, Collidator
 	private final int height = 71;
 	private final int widthExplosion = 130;
 	private final int heightExplosion = 130;
+	private final int posXInicial;
+
+	private int offScreenTolerance = height;
+	private int invulnerabilityTime = 0;
+	private int deadTime = 0;
+	private double distanciaRecorrida = 0;
 
 	private double posX;
 	private double posY;
-	private double velY = 0;
-	private double rotation = 0;
-	private double timeStandby = 0;
+	private double speed = 0;
 
-	private boolean idle = true;
-	private boolean dead = false;
-	private boolean grounded = false;
-	private boolean freeFall = false;
+	private double rotation = 0;
+//	private double timeStandby = 0;
+
+//	private boolean idle = true;
+//	private boolean dead = false;
+//	private boolean grounded = false;
 	private boolean directionRight = false;
 	private boolean directionLeft = false;
 	private boolean accelerated = false;
+	private boolean isComputer = false;
 
+	/// IMAGENES
 	private Image imageBase;
+	private Image imageExplosion;
 	private Image imageExplosion0;
 	private Image imageExplosion1;
 	private Image imageExplosion2;
@@ -76,107 +85,98 @@ public class Car extends GameObject implements Updatable, Renderable, Collidator
 	private Image imageExplosion22;
 	private Image imageExplosion23;
 	private Image imageExplosion24;
-//	private Image image1;
-//	private Image image2;
-//	private Image image3;
-//	private Image image4;
 
+	/// AUDIO
 	private AudioClip dieAudio;
 	private AudioClip hitAudio;
 	private AudioClip wingAudio;
 	private AudioClip engineAudio;
 	private AudioClip screechingTiresAudio;
+	private AudioClip carCrashAudio;
 
+	/// RENDER
 	private ImageView render;
 
+	/// COLLIDER
 	private Rectangle collider;
 	private final double colliderTolerance = 0.75;
 	private final int colliderWidth = (int) (width * colliderTolerance);
 	private final int colliderHeight = (int) (height * colliderTolerance);
 
-	private final IndividualSpriteAnimation flappyAnimation;
-	private final RotateTransition idleAnimation;
+	/// ANIMATIONS
+	private final IndividualSpriteAnimation invulnerabilityAnimation;
+	private final RotateTransition rotateAnimation;
 	private final IndividualSpriteAnimation explosionAnimation;
 	private final Duration translateDuration = Duration.millis(1000);
-	private boolean isComputer = false;
-	
 
-	public Car(int x, int y, Score score, Speedometer speedometer, GPS gps, boolean computer) {
+	public Car(int x, int y, Road road, Score score, Speedometer speedometer, GPS gps, boolean computer) {
 		posY = y;
 		posX = x;
+		posXInicial = x;
+		this.road = road;
 		this.score = score;
 		this.speedometer = speedometer;
 		this.gps = gps;
-		this.isComputer  = computer;
+		this.isComputer = computer;
 
 		initImages();
 		initAudios();
 		render = new ImageView(imageBase);
 		render.setViewOrder(1);
+		render.setTranslateY(posY - height / 2);
 
 		collider = new Rectangle(posX - colliderWidth / 2, posY - colliderHeight / 2, colliderWidth, colliderHeight);
 		collider.setFill(null);
 		collider.setStroke(Color.FUCHSIA);
 
-		flappyAnimation = initFlappyAnimation();
-		idleAnimation = initIdleAnimation();
+		invulnerabilityAnimation = initInvulnerabilityAnimation();
+		rotateAnimation = initRotateAnimation();
 		explosionAnimation = initExplosionAnimation();
-
 	}
 
 	private void initImages() {
 		imageBase = new Image("file:src/main/resources/PNG/Cars/car_black_1.png", width, height, false, false);
-		imageExplosion0 = new Image("file:src/main/resources/spriteExplosion/sprite0.png", height, height, 
-				false, false);
-		imageExplosion1 = new Image("file:src/main/resources/spriteExplosion/sprite1.png", height, height, 
-				false, false);
-		imageExplosion2 = new Image("file:src/main/resources/spriteExplosion/sprite2.png", height, height, 
-				false, false);
-		imageExplosion3 = new Image("file:src/main/resources/spriteExplosion/sprite3.png", height, height, 
-				false, false);
-		imageExplosion4 = new Image("file:src/main/resources/spriteExplosion/sprite4.png", height, height, 
-				false, false);
-		imageExplosion5 = new Image("file:src/main/resources/spriteExplosion/sprite5.png", height, height, 
-				false, false);
-		imageExplosion6 = new Image("file:src/main/resources/spriteExplosion/sprite6.png", height, height, 
-				false, false);
-		imageExplosion7 = new Image("file:src/main/resources/spriteExplosion/sprite7.png", height, height, 
-				false, false);
-		imageExplosion8 = new Image("file:src/main/resources/spriteExplosion/sprite8.png", height, height, 
-				false, false);
-		imageExplosion9 = new Image("file:src/main/resources/spriteExplosion/sprite9.png", height, height, 
-				false, false);
-		imageExplosion10 = new Image("file:src/main/resources/spriteExplosion/sprite10.png", height, height, 
-				false, false);
-		imageExplosion11 = new Image("file:src/main/resources/spriteExplosion/sprite11.png", height, height, 
-				false, false);
-		imageExplosion12 = new Image("file:src/main/resources/spriteExplosion/sprite12.png", height, height, 
-				false, false);
-		imageExplosion13 = new Image("file:src/main/resources/spriteExplosion/sprite13.png", height, height, 
-				false, false);
-		imageExplosion14 = new Image("file:src/main/resources/spriteExplosion/sprite14.png", height, height, 
-				false, false);
-		imageExplosion15 = new Image("file:src/main/resources/spriteExplosion/sprite15.png", height, height, 
-				false, false);
-		imageExplosion16 = new Image("file:src/main/resources/spriteExplosion/sprite16.png", height, height, 
-				false, false);
-		imageExplosion17 = new Image("file:src/main/resources/spriteExplosion/sprite17.png", height, height, 
-				false, false);
-		imageExplosion18 = new Image("file:src/main/resources/spriteExplosion/sprite18.png", height, height, 
-				false, false);
-		imageExplosion19 = new Image("file:src/main/resources/spriteExplosion/sprite19.png", height, height, 
-				false, false);
-		imageExplosion20 = new Image("file:src/main/resources/spriteExplosion/sprite20.png", height, height, 
-				false, false);
-		imageExplosion21 = new Image("file:src/main/resources/spriteExplosion/sprite21.png", height, height, 
-				false, false);
-		imageExplosion22 = new Image("file:src/main/resources/spriteExplosion/sprite22.png", height, height, 
-				false, false);
-		imageExplosion23 = new Image("file:src/main/resources/spriteExplosion/sprite23.png", height, height, 
-				false, false);
-		imageExplosion24 = new Image("file:src/main/resources/spriteExplosion/sprite24.png", height, height, 
-				false, false);
-		
+		imageExplosion0 = new Image("file:src/main/resources/spriteExplosion/sprite0.png", width, height, false, false);
+		imageExplosion1 = new Image("file:src/main/resources/spriteExplosion/sprite1.png", width, height, false, false);
+		imageExplosion2 = new Image("file:src/main/resources/spriteExplosion/sprite2.png", width, height, false, false);
+		imageExplosion3 = new Image("file:src/main/resources/spriteExplosion/sprite3.png", width, height, false, false);
+		imageExplosion4 = new Image("file:src/main/resources/spriteExplosion/sprite4.png", width, height, false, false);
+		imageExplosion5 = new Image("file:src/main/resources/spriteExplosion/sprite5.png", width, height, false, false);
+		imageExplosion6 = new Image("file:src/main/resources/spriteExplosion/sprite6.png", width, height, false, false);
+		imageExplosion7 = new Image("file:src/main/resources/spriteExplosion/sprite7.png", width, height, false, false);
+		imageExplosion8 = new Image("file:src/main/resources/spriteExplosion/sprite8.png", width, height, false, false);
+		imageExplosion9 = new Image("file:src/main/resources/spriteExplosion/sprite9.png", width, height, false, false);
+		imageExplosion10 = new Image("file:src/main/resources/spriteExplosion/sprite10.png", width, height, false,
+				false);
+		imageExplosion11 = new Image("file:src/main/resources/spriteExplosion/sprite11.png", width, height, false,
+				false);
+		imageExplosion12 = new Image("file:src/main/resources/spriteExplosion/sprite12.png", width, height, false,
+				false);
+		imageExplosion13 = new Image("file:src/main/resources/spriteExplosion/sprite13.png", width, height, false,
+				false);
+		imageExplosion14 = new Image("file:src/main/resources/spriteExplosion/sprite14.png", width, height, false,
+				false);
+		imageExplosion15 = new Image("file:src/main/resources/spriteExplosion/sprite15.png", width, height, false,
+				false);
+		imageExplosion16 = new Image("file:src/main/resources/spriteExplosion/sprite16.png", width, height, false,
+				false);
+		imageExplosion17 = new Image("file:src/main/resources/spriteExplosion/sprite17.png", width, height, false,
+				false);
+		imageExplosion18 = new Image("file:src/main/resources/spriteExplosion/sprite18.png", width, height, false,
+				false);
+		imageExplosion19 = new Image("file:src/main/resources/spriteExplosion/sprite19.png", width, height, false,
+				false);
+		imageExplosion20 = new Image("file:src/main/resources/spriteExplosion/sprite20.png", width, height, false,
+				false);
+		imageExplosion21 = new Image("file:src/main/resources/spriteExplosion/sprite21.png", width, height, false,
+				false);
+		imageExplosion22 = new Image("file:src/main/resources/spriteExplosion/sprite22.png", width, height, false,
+				false);
+		imageExplosion23 = new Image("file:src/main/resources/spriteExplosion/sprite23.png", width, height, false,
+				false);
+		imageExplosion24 = new Image("file:src/main/resources/spriteExplosion/sprite24.png", width, height, false,
+				false);
+
 //		image1 = new Image("file:src/main/resources/PNG/Cars/car_blue_1.png", width, height, false, false);
 //		image2 = new Image("file:src/main/resources/PNG/Cars/car_green_1.png", width, height, false, false);
 //		image3 = new Image("file:src/main/resources/PNG/Cars/car_yellow_1.png", width, height, false, false);
@@ -198,43 +198,34 @@ public class Car extends GameObject implements Updatable, Renderable, Collidator
 		wingAudio = AudioResources.getWingAudio();
 		engineAudio = AudioResources.getEngineAudio();
 		screechingTiresAudio = AudioResources.getScreechingTiresAudio();
+		carCrashAudio = AudioResources.getCarCrashAudio();
 	}
 
 	private IndividualSpriteAnimation initExplosionAnimation() {
 
-		IndividualSpriteAnimation sprite = new IndividualSpriteAnimation(new Image[] {
-				imageBase,
-				imageExplosion0,
-				imageExplosion1,
-				imageExplosion2,
-				imageExplosion3,
-				imageExplosion4,
-				imageExplosion5,
-				imageExplosion6,
-				imageExplosion7,
-				imageExplosion8,
-				imageExplosion9,
-				imageExplosion10,
-				imageExplosion11
-		}, render, Duration.millis(1000));
-		sprite.setCustomFrames(new int[] { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 });
+		IndividualSpriteAnimation sprite = new IndividualSpriteAnimation(new Image[] { imageBase, imageExplosion0,
+				imageExplosion1, imageExplosion2, imageExplosion3, imageExplosion4, imageExplosion5, imageExplosion6,
+				imageExplosion7, imageExplosion8, imageExplosion9, imageExplosion10, imageExplosion11, imageExplosion12,
+				imageExplosion13, imageExplosion14, imageExplosion15, imageExplosion16, imageExplosion17,
+				imageExplosion18, imageExplosion19, imageExplosion20, imageExplosion21, imageExplosion22,
+				imageExplosion23, imageExplosion24 }, render, Duration.millis(3000));
 		sprite.setCycleCount(1);
-//		sprite.se
-		
+		sprite.setCustomFrames(
+				new int[] { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24 });
+
 		return sprite;
 	}
 
-	private IndividualSpriteAnimation initFlappyAnimation() {
+	private IndividualSpriteAnimation initInvulnerabilityAnimation() {
 
 		IndividualSpriteAnimation individualSpriteAnimation = new IndividualSpriteAnimation(
-				new Image[] { imageBase, imageExplosion1, imageBase }, render, Duration.millis(500));
-		individualSpriteAnimation.setCustomFrames(new int[] { 0, 1, 2, 1 });
+				new Image[] { imageBase, imageExplosion24 }, render, Duration.millis(200));
+		individualSpriteAnimation.setCustomFrames(new int[] { 0, 1, 0 });
 		individualSpriteAnimation.setCycleCount(Animation.INDEFINITE);
-//		individualSpriteAnimation.play();
 		return individualSpriteAnimation;
 	}
 
-	private RotateTransition initIdleAnimation() {
+	private RotateTransition initRotateAnimation() {
 
 		RotateTransition rotateTransition = new RotateTransition();
 
@@ -244,54 +235,70 @@ public class Car extends GameObject implements Updatable, Renderable, Collidator
 		rotateTransition.setByAngle(360);
 		rotateTransition.setCycleCount(50);
 		rotateTransition.setAutoReverse(false);
-		rotateTransition.play();
 		return rotateTransition;
 	}
 
 	@Override
 	public void update(double deltaTime) {
-		timeStandby += deltaTime;
-		setY(posY + velY * deltaTime);
 
-		if (!dead) {
-			if(Config.baseSpeed > 0)
-				Config.distanciaActual += (Config.baseSpeed / 2) / 20;
-			gps.update();
-			speedometer.update();
-			int direction = directionLeft ? -1 : (directionRight ? 1 : 0);
-			setX(posX + direction * Config.baseSpeed * deltaTime);
-			if(isComputer)
-				randomDirection();
-			if(accelerated)
-				if(Config.baseSpeed < 500)
-					Config.baseSpeed += 10;
-			if(!accelerated)
-				if(Config.baseSpeed > 0)
-					Config.baseSpeed -= 5;
-		} if(dead) {
+		if (road != null)
+			road.update(deltaTime, speed);
+		if (deadTime > 0) {
+			invulnerabilityAnimation.stop();
+			deadTime--;
+			speed = 0;
 			explosionAnimation.play();
-			
-			posY += Config.baseSpeed * deltaTime;
+			if (deadTime == 0) {
+				setX(posXInicial);
+				render.setRotate(0);
+			}
+		} else {
+			if (invulnerabilityTime > 0) {
+				explosionAnimation.stop();
+				invulnerabilityAnimation.play();
+				invulnerabilityTime--;
+				carActions(deltaTime);
+				if(invulnerabilityTime == 0)
+					render.setImage(imageBase);
+			} else {
 
-			render.setTranslateY((posY % height));
+				invulnerabilityAnimation.stop();
+				carActions(deltaTime);
+			}
 		}
 
-//		if (!idle) {
-//			if (!grounded) {
-//				velY += Config.gravity * deltaTime;
-//			}
-//
-//			if (timeStandby > 0) {
-//				setRotation(Math.min(-30 + timeStandby * ROTATION_SPEED, 90));
-//			}
+		/// SI SALE DE LA PANTALLA
+		if (isOffScreen()) {
+			GameObjectBuilder.getInstance().remove(this);
+		}
+	}
 
-//			if (rotation > ROTATION_FREE_FALL && !freeFall) {
-//				freeFall();
-//			}
+	private void carActions(double deltaTime) {
+		if (speed > 0)
+			distanciaRecorrida += speed / 400;
+		if (gps != null)
+			gps.update(distanciaRecorrida);
+		if (speedometer != null)
+			speedometer.update(speed);
+		int direction = directionLeft ? -1 : (directionRight ? 1 : 0);
+		setX(posX + direction * speed * deltaTime);
+		if (accelerated)
+			if (speed < 500) {
+				speed += 10;
+				if (speed > 500)
+					speed = 500;
+			}
+		if (!accelerated)
+			if (speed > 0)
+				speed -= 5;
+	}
+
+	public double getSpeed() {
+		return speed;
 	}
 
 	private void checkHorizontal() {
-		if (!dead) {
+		if (!isDead()) {
 			if (directionLeft) {
 				render.setRotate(-15);
 			} else if (directionRight) {
@@ -312,72 +319,25 @@ public class Car extends GameObject implements Updatable, Renderable, Collidator
 		checkHorizontal();
 	}
 
-//	private void freeFall() {
-//		freeFall = true;
-//		flappyAnimation.stop();
-//		render.setImage(imageBase);
-//	}
-
-//	public void push() {
-//		if (!dead) {
-//			wingAudio.play();
-//			idle = false;
-//			freeFall = false;
-//			idleAnimation.jumpTo(translateDuration.divide(2));
-//			idleAnimation.stop();
-//			flappyAnimation.play();
-//			velY = -Config.jumpForce;
-//			timeStandby = -ROTATION_THRESHOLD;
-//			setRotation(-20);
-//		}
-//	}
-
-	public void pushLeft() {
-		if (!dead) {
-//			wingAudio.play();
-//			idle = false;
-//			freeFall = false;
-//			idleAnimation.jumpTo(translateDuration.divide(2));
-//			idleAnimation.stop();
-			flappyAnimation.play();
-			setDirectionLeft(true);
-//			velY = -Config.jumpForce;
-//			timeStandby = -ROTATION_THRESHOLD;
-//			setRotation(-20);
-		}
-	}
-
-	public void pushRight() {
-		if (!dead) {
-//			wingAudio.play();
-//			idle = false;
-//			freeFall = false;
-//			idleAnimation.jumpTo(translateDuration.divide(2));
-//			idleAnimation.stop();
-			flappyAnimation.play();
-			setDirectionRight(true);
-//			velY = -Config.jumpForce;
-//			timeStandby = -ROTATION_THRESHOLD;
-//			setRotation(20);
-		}
-	}
-
 	public void stopRotationAnimation() {
-		idleAnimation.stop();
+		rotateAnimation.stop();
+	}
+
+	public void playRotationAnimation() {
+		rotateAnimation.play();
 	}
 
 	public boolean isDead() {
-		return dead;
+		return (deadTime > 0);
 	}
 
-	private void setY(double posY) {
+	public void setY(double posY) {
 		this.posY = posY;
-		render.setY(posY - height / 2);
+		render.setTranslateY(posY - height / 2);
 		collider.setY(posY - colliderHeight / 2);
-
 	}
 
-	private void setX(double posX) {
+	public void setX(double posX) {
 		this.posX = posX;
 		render.setX(posX - width / 2);
 		collider.setX(posX - colliderWidth / 2);
@@ -401,22 +361,21 @@ public class Car extends GameObject implements Updatable, Renderable, Collidator
 
 	@Override
 	public void collide(Collideable collideable) {
-		if (!grounded) {
-			if (collideable.getClass() == ScoreCollider.class) {
+
+		if (collideable.getClass() == ScoreCollider.class) {
+			if (score != null)
 				score.increase();
-				((ScoreCollider) collideable).remove();
-			} else {
-				if (!dead) {
-					screechingTiresAudio.play();
-					dead = true;
-				}
-				if (collideable.getClass() == Ground.class) {
-					setY(((Rectangle) ((Ground) collideable).getCollider()).getY() - height / 2);
-					velY = 0;
-					grounded = true;
-				}
-			}
+			((ScoreCollider) collideable).remove();
+		} else if ((collideable.getClass() == Barrel.class || collideable.getClass() == Car.class)
+				&& invulnerabilityTime > 0) {
+
+		} else if (!isDead()) {
+			carCrashAudio.play();
+			deadTime = 400;
+			explosionAnimation.play();
+			invulnerabilityTime = 500;
 		}
+
 	}
 
 	public double getX() {
@@ -435,20 +394,48 @@ public class Car extends GameObject implements Updatable, Renderable, Collidator
 	public void destroy() {
 	}
 
+	public boolean isOffScreen() {
+		return posY - Config.baseHeight > offScreenTolerance || posY < -offScreenTolerance;
+	}
+
+	public boolean isAccelerated() {
+		return accelerated;
+	}
+
 	public void accelerate(boolean b) {
 		// TODO Auto-generated method stub
 		accelerated = b;
 	}
-	
-	public void randomDirection() {
-		stopRotationAnimation();
-		if(posX < Config.roadLeft + Config.platformWidth + 70) {
-			this.directionLeft = false;
-			this.directionRight = true;
-		}
-		if(posX > Config.roadRight - Config.platformWidth - 70) {
-			this.directionRight = false;
-			this.directionLeft = true;
-		}
+
+	public double getDistanciaRecorrida() {
+		return distanciaRecorrida;
+	}
+
+	public void setDistanciaRecorrida(int distanciaRecorrida) {
+		this.distanciaRecorrida = distanciaRecorrida;
+	}
+
+	public boolean isDirectionRight() {
+		return directionRight;
+	}
+
+	public boolean isDirectionLeft() {
+		return directionLeft;
+	}
+
+	public int getInvulnerabilityTime() {
+		return invulnerabilityTime;
+	}
+
+	public void setInvulnerabilityTime(int invulnerabilityTime) {
+		this.invulnerabilityTime = invulnerabilityTime;
+	}
+
+	public int getDeadTime() {
+		return deadTime;
+	}
+
+	public void setDeadTime(int deadTime) {
+		this.deadTime = deadTime;
 	}
 }

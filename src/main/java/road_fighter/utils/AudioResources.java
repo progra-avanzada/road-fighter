@@ -32,6 +32,10 @@ public final class AudioResources {
 		return create("sfx/screeching_tires.wav");
 	}
 	
+	public static AudioClip getCarCrashAudio() {
+		return create("sfx/car_crash.mp3");
+	}
+	
 	public static AudioClip getCoinsAudio() {
 		return create("sfx/coins.wav");
 	}
