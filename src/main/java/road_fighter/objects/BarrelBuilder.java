@@ -1,6 +1,7 @@
 package road_fighter.objects;
 
 import java.util.ArrayList;
+import java.util.Random;
 
 import road_fighter.Config;
 import road_fighter.interfaces.Updatable;
@@ -12,31 +13,25 @@ public class BarrelBuilder extends GameObject implements Updatable {
 
 	private int[][] obstaculos;
 
-	private ArrayList<ArrayList<Barrel>> barrelsPerPlayer;
-	private ArrayList<ArrayList<ScoreCollider>> scoreCollidersPerPlayer;
-	private ArrayList<Player> jugadores;
+	private ArrayList<Barrel> barrels;
+	private ArrayList<ScoreCollider> scoreColliders;
+	private Player jugador;
 
 	private int cantObstaculos = 0;
 
 	private boolean running = false;
 
-	public BarrelBuilder(ArrayList<Player> listPlayers) {
+	public BarrelBuilder(Player player, long seed) {
 //		this.posX = posX;
-		jugadores = listPlayers;
+		jugador = player;
 
 		obstaculos = new int[1000][2];
-		barrelsPerPlayer = new ArrayList<ArrayList<Barrel>>();
-		scoreCollidersPerPlayer = new ArrayList<ArrayList<ScoreCollider>>();
+		barrels = new ArrayList<Barrel>();
+		scoreColliders = new ArrayList<ScoreCollider>();
 
-		for (int i = 0; i < jugadores.size(); i++) {
-			barrelsPerPlayer.add(new ArrayList<Barrel>());
-			scoreCollidersPerPlayer.add(new ArrayList<ScoreCollider>());
-		}
-
+		Random generator = new Random(seed);
 		for (int i = Config.startObstacles; i < Config.distanciaMax; i += Config.distancePerBarrel) {
-			double random = Math.random();
-
-			int posX = (int) (random * (Config.roadWidth - Config.platformWidth - Config.barrelSize));
+			int posX = (int) (generator.nextDouble() * (Config.roadWidth - Config.platformWidth - Config.barrelSize));
 			obstaculos[cantObstaculos][0] = posX;
 			obstaculos[cantObstaculos][1] = i;
 			cantObstaculos++;
@@ -46,26 +41,21 @@ public class BarrelBuilder extends GameObject implements Updatable {
 
 	@Override
 	public void update(double deltaTime) {
-
 		if (running) {
+			double distanciaJugador = jugador.getCar().getDistanciaRecorrida();
 
-			for (int j = 0; j < jugadores.size(); j++) {
+			for (int i = 0; i < cantObstaculos; i++) {
 
-				double distanciaJugador = jugadores.get(j).getCar().getDistanciaRecorrida();
+				if ((obstaculos[i][1] - distanciaJugador) < 540 && barrels.size() < i) {
 
-				for (int i = 0; i < cantObstaculos; i++) {
-
-					if ((obstaculos[i][1] - distanciaJugador) < 540 && barrelsPerPlayer.get(j).size() < i) {
-
-						createObstacles(obstaculos[i][0] + jugadores.get(j).getRoadPositionX() + Config.platformWidth,
-								obstaculos[i][1], j);
-					}
+					createObstacles(obstaculos[i][0] + jugador.getRoadPositionX() + Config.platformWidth,
+							obstaculos[i][1]);
 				}
+			}
 
-				for (int i = 0; i < barrelsPerPlayer.get(j).size(); i++) {
-					barrelsPerPlayer.get(j).get(i).updateBarrel(jugadores.get(j).getCar().getSpeed(), deltaTime);
-					scoreCollidersPerPlayer.get(j).get(i).update(jugadores.get(j).getCar().getSpeed(), deltaTime);
-				}
+			for (int i = 0; i < barrels.size(); i++) {
+				barrels.get(i).updateBarrel(jugador.getCar().getSpeed(), deltaTime);
+				scoreColliders.get(i).update(jugador.getCar().getSpeed(), deltaTime);
 			}
 		}
 	}
@@ -78,14 +68,12 @@ public class BarrelBuilder extends GameObject implements Updatable {
 		running = false;
 	}
 
-	public void createObstacles(int x, int distancia, int perteneceAJugador) {
-
+	public void createObstacles(int x, int distancia) {
 		Barrel barrel = new Barrel(x, distancia);
-		ScoreCollider scoreCollider = new ScoreCollider(jugadores.get(perteneceAJugador).getRoadPositionX());
+		ScoreCollider scoreCollider = new ScoreCollider(jugador.getRoadPositionX());
 		GameObjectBuilder.getInstance().add(barrel, scoreCollider);
-		barrelsPerPlayer.get(perteneceAJugador).add(barrel);
-		scoreCollidersPerPlayer.get(perteneceAJugador).add(scoreCollider);
-
+		barrels.add(barrel);
+		scoreColliders.add(scoreCollider);
 	}
 
 	@Override

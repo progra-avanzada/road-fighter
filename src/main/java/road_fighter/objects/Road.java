@@ -94,7 +94,7 @@ public class Road extends GameObject implements Renderable, Collideable {
 		renderSalida.setTranslateX(posX);
 		renderSalida.setViewOrder(2);
 
-		colliderLeft = new Rectangle(posX, 0, 20, Config.baseHeight);
+		colliderLeft = new Rectangle(posX, 0, 20, Config.baseHeight);		
 		colliderRight = new Rectangle(posX + 3 * width - 20, 0, 20, Config.baseHeight);
 	}
 
@@ -120,6 +120,7 @@ public class Road extends GameObject implements Renderable, Collideable {
 		shape.setFill(null);
 		shape.setStroke(Color.FUCHSIA);
 		shape.setStrokeWidth(1);
+		shape.setVisible(false);
 		return shape;
 	}
 

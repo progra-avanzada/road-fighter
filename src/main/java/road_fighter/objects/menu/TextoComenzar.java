@@ -17,27 +17,34 @@ public class TextoComenzar extends GameObject implements Renderable {
 
 	private Text text;
 	private VBox render;
+	private Font font;
 
-	public TextoComenzar() {
-		text = new Text("Interactue para\ncomenzar");
+	public TextoComenzar(String textString) {
+		font = Font.loadFont(ClassLoader.getSystemResource("font/GAMERIA.ttf").toString(), 50);
 
+		text = new Text(textString);
 		render = new VBox(text);
 		render.setAlignment(Pos.TOP_CENTER);
 		render.setPrefWidth(Config.baseWidth);
 
 		render.setTranslateY(Y);
-		Font font = Font.loadFont(ClassLoader.getSystemResource("font/GAMERIA.ttf").toString(), 50);
 		text.setTextAlignment(TextAlignment.CENTER);
 		text.setFont(font);
 		text.setFill(Color.GHOSTWHITE);
 	}
-
+	
+	public void setText(String textString) {
+		text.setText(textString);
+	}
+	
 	@Override
 	public Node getRender() {
 		return render;
 	}
 
 	@Override
-	public void destroy() {	}
+	public void destroy() {
+		text.setVisible(false);
+	}
 	
 }

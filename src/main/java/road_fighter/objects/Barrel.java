@@ -42,6 +42,7 @@ public class Barrel extends GameObject implements Renderable, Collideable {
 		collider.setFill(null);
 		collider.setStroke(Color.FUCHSIA);
 		collider.setStrokeWidth(2);
+		collider.setVisible(false);
 
 		setPosX(posX);
 	}

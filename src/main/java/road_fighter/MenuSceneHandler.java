@@ -4,8 +4,6 @@ import javafx.event.EventHandler;
 import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.input.KeyEvent;
-import javafx.scene.input.MouseButton;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 import road_fighter.objects.Background;
 import road_fighter.objects.Car;
@@ -13,7 +11,6 @@ import road_fighter.objects.FpsInfo;
 import road_fighter.objects.GPS;
 import road_fighter.objects.Road;
 import road_fighter.objects.Speedometer;
-//import road_fighter.objects.Ground;
 import road_fighter.objects.menu.TextoComenzar;
 import road_fighter.objects.menu.Title;
 import road_fighter.utils.GameObjectBuilder;
@@ -39,26 +36,10 @@ public class MenuSceneHandler extends SceneHandler {
 	}
 
 	protected void defineEventHandlers() {
-		mouseEventHandler = new EventHandler<MouseEvent>() {
-			@Override
-			public void handle(MouseEvent event) {
-				if (event.getButton() == MouseButton.PRIMARY) {
-					g.startGame();
-				}
-			}
-		};
-
 		keyEventHandler = new EventHandler<KeyEvent>() {
 			@Override
 			public void handle(KeyEvent e) {
 				switch (e.getCode()) {
-				case UP:
-				case W:
-				case SPACE:
-				case ENTER:
-					g.startGame();
-					break;
-				case Q:
 				case ESCAPE:
 					System.exit(0);
 					break;
@@ -85,7 +66,7 @@ public class MenuSceneHandler extends SceneHandler {
 		fpsInfo = new FpsInfo(fps);
 
 		title = new Title();
-		textoComenzar = new TextoComenzar();
+		textoComenzar = new TextoComenzar("Conectando");
 
 		GameObjectBuilder gameOB = GameObjectBuilder.getInstance();
 		gameOB.setRootNode(baseGroup);
@@ -102,5 +83,9 @@ public class MenuSceneHandler extends SceneHandler {
 	public void unload() {
 		rootGroup.getChildren().remove(0);
 		super.unload();
+	}
+	
+	public void changeMessage(String message) {
+		textoComenzar.setText(message);
 	}
 }

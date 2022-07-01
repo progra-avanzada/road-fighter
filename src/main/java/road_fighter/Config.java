@@ -45,16 +45,19 @@ public class Config {
 	/// PLAYER 1
 //	public static int distanciaActual1 = 0;
 //	public static double speedPlayer1 = 500;
-	public final static int Player1PosX = sizeBar + sizeRoadImage;
-	public final static int barPlayer1 = 0;
-	public final static int posXRoadPlayer1 = 156;
+	public final static int posXRoadPlayer1 = (int) ((baseWidth / 2)-(sizeRoadImage*1.5));
+	public final static int Player1PosX = posXRoadPlayer1 + sizeRoadImage + 20;
+	public final static int barPlayer1 = posXRoadPlayer1 - sizeBar;
 	
 	/// PLAYER 2
 //	public static int distanciaActual2 = 0;
 //	public static double speedPlayer2 = 500;
-	public final static int Player2PosX = baseWidth / 2 + Player1PosX + sizeRoadImage;
+	public final static int Player2PosX = Player1PosX + 100;
 	public final static int barPlayer2 = baseWidth / 2;
 	public final static int posXRoadPlayer2 = baseWidth / 2 + 156;
+	
+	// Cliente
+	public final static String ServerURL = "localhost";
 
 	private Config() {
 	}

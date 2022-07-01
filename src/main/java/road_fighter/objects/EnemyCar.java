@@ -24,17 +24,9 @@ import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.Shape;
 import javafx.util.Duration;
 
-public class Car extends GameObject implements Updatable, Renderable, Collidator {
-
-	private Road road;
-	private Score score;
-	private Speedometer speedometer;
-	private GPS gps;
-
+public class EnemyCar extends GameObject implements Updatable, Renderable, Collidator {
 	private final int width = 31;
 	private final int height = 71;
-	private final int widthExplosion = 130;
-	private final int heightExplosion = 130;
 	private final int posXInicial;
 
 	private int offScreenTolerance = height;
@@ -46,20 +38,12 @@ public class Car extends GameObject implements Updatable, Renderable, Collidator
 	private double posY;
 	private double speed = 0;
 
-	private double rotation = 0;
-//	private double timeStandby = 0;
-
-//	private boolean idle = true;
-//	private boolean dead = false;
-//	private boolean grounded = false;
 	private boolean directionRight = false;
 	private boolean directionLeft = false;
 	private boolean accelerated = false;
-	private boolean isComputer = false;
 
 	/// IMAGENES
 	private Image imageBase;
-	private Image imageExplosion;
 	private Image imageExplosion0;
 	private Image imageExplosion1;
 	private Image imageExplosion2;
@@ -87,11 +71,6 @@ public class Car extends GameObject implements Updatable, Renderable, Collidator
 	private Image imageExplosion24;
 
 	/// AUDIO
-	private AudioClip dieAudio;
-	private AudioClip hitAudio;
-	private AudioClip wingAudio;
-	private AudioClip engineAudio;
-	private AudioClip screechingTiresAudio;
 	private AudioClip carCrashAudio;
 
 	/// RENDER
@@ -107,17 +86,11 @@ public class Car extends GameObject implements Updatable, Renderable, Collidator
 	private final IndividualSpriteAnimation invulnerabilityAnimation;
 	private final RotateTransition rotateAnimation;
 	private final IndividualSpriteAnimation explosionAnimation;
-	private final Duration translateDuration = Duration.millis(1000);
 
-	public Car(int x, int y, Road road, Score score, Speedometer speedometer, GPS gps, boolean computer) {
+	public EnemyCar(int x, int y) {
 		posY = y;
 		posX = x;
 		posXInicial = x;
-		this.road = road;
-		this.score = score;
-		this.speedometer = speedometer;
-		this.gps = gps;
-		this.isComputer = computer;
 
 		initImages();
 		initAudios();
@@ -136,7 +109,7 @@ public class Car extends GameObject implements Updatable, Renderable, Collidator
 	}
 
 	private void initImages() {
-		imageBase = new Image("file:src/main/resources/PNG/Cars/car_black_1.png", width, height, false, false);
+		imageBase = new Image("file:src/main/resources/PNG/Cars/car_blue_1.png", width, height, false, false);
 		imageExplosion0 = new Image("file:src/main/resources/spriteExplosion/sprite0.png", width, height, false, false);
 		imageExplosion1 = new Image("file:src/main/resources/spriteExplosion/sprite1.png", width, height, false, false);
 		imageExplosion2 = new Image("file:src/main/resources/spriteExplosion/sprite2.png", width, height, false, false);
@@ -177,28 +150,9 @@ public class Car extends GameObject implements Updatable, Renderable, Collidator
 				false);
 		imageExplosion24 = new Image("file:src/main/resources/spriteExplosion/sprite24.png", width, height, false,
 				false);
-
-//		image1 = new Image("file:src/main/resources/PNG/Cars/car_blue_1.png", width, height, false, false);
-//		image2 = new Image("file:src/main/resources/PNG/Cars/car_green_1.png", width, height, false, false);
-//		image3 = new Image("file:src/main/resources/PNG/Cars/car_yellow_1.png", width, height, false, false);
-//		image4 = new Image("file:src/main/resources/PNG/Cars/car_red_1.png", width, height, false, false);
-
-//		Color[][] posibleColos = { original, blue, yellow };
-
-//		int randomIndex = (int) Math.floor(Math.random() * 3);
-//		Color[] colorRandom = posibleColos[randomIndex];
-//
-//		imageUp = Utils.reColor(imageUp, original, colorRandom);
-//		imageBase = Utils.reColor(imageBase, original, colorRandom);
-//		imageDown = Utils.reColor(imageDown, original, colorRandom);
 	}
 
 	private void initAudios() {
-		dieAudio = AudioResources.getDieAudio();
-		hitAudio = AudioResources.getHitAudio();
-		wingAudio = AudioResources.getWingAudio();
-		engineAudio = AudioResources.getEngineAudio();
-		screechingTiresAudio = AudioResources.getScreechingTiresAudio();
 		carCrashAudio = AudioResources.getCarCrashAudio();
 	}
 
@@ -241,8 +195,6 @@ public class Car extends GameObject implements Updatable, Renderable, Collidator
 
 	@Override
 	public void update(double deltaTime) {
-		if (road != null)
-			road.update(deltaTime, speed);
 		if (deadTime > 0) {
 			invulnerabilityAnimation.stop();
 			deadTime--;
@@ -266,20 +218,11 @@ public class Car extends GameObject implements Updatable, Renderable, Collidator
 				carActions(deltaTime);
 			}
 		}
-
-		/// SI SALE DE LA PANTALLA
-		if (isOffScreen()) {
-			GameObjectBuilder.getInstance().remove(this);
-		}
 	}
 
 	private void carActions(double deltaTime) {
 		if (speed > 0)
 			distanciaRecorrida += speed / 400;
-		if (gps != null)
-			gps.update(distanciaRecorrida);
-		if (speedometer != null)
-			speedometer.update(speed);
 		int direction = directionLeft ? -1 : (directionRight ? 1 : 0);
 		setX(posX + direction * speed * deltaTime);
 		if (accelerated)
@@ -344,11 +287,6 @@ public class Car extends GameObject implements Updatable, Renderable, Collidator
 
 	}
 
-	private void setRotation(double rotation) {
-		this.rotation = rotation;
-		render.setRotate(rotation);
-	}
-
 	@Override
 	public ImageView getRender() {
 		return render;
@@ -363,10 +301,8 @@ public class Car extends GameObject implements Updatable, Renderable, Collidator
 	public void collide(Collideable collideable) {
 
 		if (collideable.getClass() == ScoreCollider.class) {
-			if (score != null)
-				score.increase();
 			((ScoreCollider) collideable).remove();
-		} else if ((collideable.getClass() == Barrel.class || collideable.getClass() == Car.class)
+		} else if ((collideable.getClass() == Barrel.class || collideable.getClass() == EnemyCar.class)
 				&& invulnerabilityTime > 0) {
 
 		} else if (!isDead()) {
@@ -392,10 +328,6 @@ public class Car extends GameObject implements Updatable, Renderable, Collidator
 
 	@Override
 	public void destroy() {
-	}
-
-	public boolean isOffScreen() {
-		return posY - Config.baseHeight > offScreenTolerance || posY < -offScreenTolerance;
 	}
 
 	public boolean isAccelerated() {

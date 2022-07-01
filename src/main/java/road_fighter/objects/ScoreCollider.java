@@ -23,6 +23,7 @@ public class ScoreCollider extends GameObject implements Collideable {
 		collider.setFill(null);
 		collider.setStroke(Color.WHITE);
 		collider.setStrokeWidth(2);
+		collider.setVisible(false);
 	}
 
 	public void update(double speed, double deltaTime) {

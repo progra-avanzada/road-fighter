@@ -1,47 +1,28 @@
 package road_fighter;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import road_fighter.interfaces.Collidator;
 import road_fighter.interfaces.Collideable;
 import road_fighter.objects.Background;
-import road_fighter.objects.Barrel;
 import road_fighter.objects.BarrelBuilder;
-import road_fighter.objects.Car;
+import road_fighter.objects.EnemyCar;
 import road_fighter.objects.FpsInfo;
-import road_fighter.objects.GPS;
 import road_fighter.objects.Player;
-import road_fighter.objects.PlayerBuilder;
-//import road_fighter.objects.Ground;
-//import road_fighter.objects.PipeBuilder;
-//import road_fighter.objects.Radio;
-import road_fighter.objects.Road;
-import road_fighter.objects.Score;
-import road_fighter.objects.ScoreCollider;
-import road_fighter.objects.Speedometer;
 import road_fighter.utils.GameObjectBuilder;
-import javafx.animation.TranslateTransition;
 import javafx.event.EventHandler;
-//import javafx.geometry.Bounds;
 import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.input.KeyEvent;
-//import javafx.scene.input.MouseEvent;
-//import javafx.scene.input.MouseButton;
-//import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Shape;
-import javafx.util.Duration;
 
 public class GameSceneHandler extends SceneHandler {
 
 	private Background background;
 	private Player player;
-	private Player player2;
+	private EnemyCar enemyCar;
 	private BarrelBuilder barrelBuilder;
-	private PlayerBuilder playerBuilder;
-	private ArrayList<Player> jugadores;
 	private FpsInfo fpsInfo;
 
 	// TODO pause
@@ -63,21 +44,9 @@ public class GameSceneHandler extends SceneHandler {
 			@Override
 			public void handle(KeyEvent e) {
 				switch (e.getCode()) {
-
-				case W:
-				case UP:
-				case ENTER:
-				case SPACE:
-					makeActionStart();
-					break;
-				case R:
-					restart();
-					break;
-				case Q:
 				case ESCAPE:
-					g.startMenu();
+					System.exit(0);
 					break;
-
 				default:
 					break;
 				}
@@ -91,20 +60,12 @@ public class GameSceneHandler extends SceneHandler {
 				case D:
 					player.getCar().setDirectionRight(true);
 					break;
-				case RIGHT:
-					player2.getCar().setDirectionRight(true);
-					break;
 				case A:
 					player.getCar().setDirectionLeft(true);
-					break;
-				case LEFT:
-					player2.getCar().setDirectionLeft(true);
 					break;
 				case W:
 					player.getCar().accelerate(true);
 					break;
-				case UP:
-					player2.getCar().accelerate(true);
 				default:
 					break;
 				}
@@ -118,20 +79,11 @@ public class GameSceneHandler extends SceneHandler {
 				case D:
 					player.getCar().setDirectionRight(false);
 					break;
-				case RIGHT:
-					player2.getCar().setDirectionRight(false);
-					break;
 				case A:
 					player.getCar().setDirectionLeft(false);
 					break;
-				case LEFT:
-					player2.getCar().setDirectionLeft(false);
-					break;
 				case W:
 					player.getCar().accelerate(false);
-					break;
-				case UP:
-					player2.getCar().accelerate(false);
 					break;
 				default:
 					break;
@@ -140,29 +92,30 @@ public class GameSceneHandler extends SceneHandler {
 		});
 	}
 
-	public void load(boolean fullStart) {
+	public void load(boolean fullStart, int playerNumber, long seed) {
 		Group rootGroup = new Group();
 		scene.setRoot(rootGroup);
 
 		background = new Background();
-		player = new Player(Config.barPlayer1, Config.posXRoadPlayer1, Config.Player1PosX);
+		
+		if (playerNumber == 1) {
+			player = new Player(Config.barPlayer1, Config.posXRoadPlayer1, Config.Player1PosX);
+			enemyCar = new EnemyCar(Config.Player2PosX, Config.playerHeight);		
+		} else {
+			player = new Player(Config.barPlayer1, Config.posXRoadPlayer1, Config.Player2PosX);
+			enemyCar = new EnemyCar(Config.Player1PosX, Config.playerHeight);
+		}
 
-		player2 = new Player(Config.barPlayer2, Config.posXRoadPlayer2, Config.Player2PosX);
-
-		jugadores = new ArrayList<Player>();
-		jugadores.add(player);
-		jugadores.add(player2);
-		barrelBuilder = new BarrelBuilder(jugadores);
-		playerBuilder = new PlayerBuilder(jugadores);
+		barrelBuilder = new BarrelBuilder(player, seed);
+		barrelBuilder.startBuilding(2 * NANOS_IN_SECOND);
 
 		fpsInfo = new FpsInfo(fps);
+		
 
 		// Add to builder
 		GameObjectBuilder gameOB = GameObjectBuilder.getInstance();
 		gameOB.setRootNode(rootGroup);
-		gameOB.add(background, fpsInfo, player.getCar(), player.getGps(), player.getRoad(), player.getScore(),
-				player.getSpeedometer(), player2.getCar(), player2.getGps(), player2.getRoad(), player2.getScore(),
-				player2.getSpeedometer(), barrelBuilder, playerBuilder);
+		gameOB.add(background, fpsInfo, player.getCar(), player.getGps(), player.getRoad(), player.getScore(), player.getSpeedometer(), barrelBuilder, enemyCar);
 
 //		for(int i = 0; i < barrelBuilder.getObstaculos().size(); i++) {
 //			gameOB.add(barrelBuilder.getObstaculos().get(i), barrelBuilder.getScoreColliders().get(i));
@@ -179,65 +132,24 @@ public class GameSceneHandler extends SceneHandler {
 		}
 	}
 
-	public void restart() {
-		cleanData();
-		load(false);
-	}
-
 	private void cleanData() {
 		GameObjectBuilder.getInstance().removeAll();
 		ended = false;
 		started = false;
 	}
 
-	private void makeActionStart() {
-		if (!started) {
-			started = true;
-			barrelBuilder.startBuilding(2 * NANOS_IN_SECOND);
-		}
-	}
-
 	public void update(double delta) {
 		super.update(delta);
 
 		checkColliders();
-
-		if (!ended) {
-//			if (player.getCar().isDead()) {
-//				ended = true;
-//				barrelBuilder.stopBuilding();
-////				Config.speedPlayer1 = 0;
-////				Config.distanciaActual1 = 0;
-//
-//				// Improve
-//				TranslateTransition tt = new TranslateTransition(Duration.millis(50), scene.getRoot());
-//				tt.setFromX(-20f);
-//				tt.setByX(20f);
-//				tt.setCycleCount(6);
-//				tt.setAutoReverse(true);
-////				tt.playFromStart();
-//				tt.setOnFinished(event -> {
-//					scene.getRoot().setTranslateX(0);
-//				});
-//			}
-//			if (player2.getCar().isDead()) {
-//				ended = true;
-//				barrelBuilder.stopBuilding();
-////				Config.speedPlayer2 = 0;
-////				Config.distanciaActual2 = 0;
-//
-//				// Improve
-//				TranslateTransition tt = new TranslateTransition(Duration.millis(50), scene.getRoot());
-//				tt.setFromX(-20f);
-//				tt.setByX(20f);
-//				tt.setCycleCount(6);
-//				tt.setAutoReverse(true);
-////				tt.playFromStart();
-//				tt.setOnFinished(event -> {
-//					scene.getRoot().setTranslateX(0);
-//				});
-//			}
+		
+		if (!g.conectado) {
+			g.startMenu();
 		}
+		
+		g.sendInput(player.getCar().isAccelerated(), player.getCar().isDirectionLeft(), player.getCar().isDirectionRight());
+		
+		enemyCar.setY(enemyCar.getY() + (player.getCar().getSpeed() - enemyCar.getSpeed()) * delta);
 	}
 
 	private void checkColliders() {
@@ -274,4 +186,9 @@ public class GameSceneHandler extends SceneHandler {
 		super.unload();
 	}
 
+	public void receiveInput(boolean accelerate, boolean left, boolean right) {
+		enemyCar.accelerate(accelerate);
+		enemyCar.setDirectionLeft(left);
+		enemyCar.setDirectionRight(right);
+	}
 }
