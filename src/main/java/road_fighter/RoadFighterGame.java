@@ -36,16 +36,6 @@ public class RoadFighterGame extends Application {
 		menuSceneHandler.load();
 		
 		cliente = new Cliente(Config.ServerURL, this);
-		
-		// XXX patron state para controlar paso de escenas?
-
-		// Scale
-		// TODO scale and fill to maintain proportion (also center)
-		// scale = new Scale();
-		// dinamico, cada vez que cambio el tamaÃ±o de ventana
-		// scale.setX(scene.getWidth() / WIDTH);
-		// scale.setY(scene.getHeight() / HEIGHT);
-		// images.getTransforms().add(scale);
 
 		stage.getIcons().add(new Image("file:src/main/resources/ico/iconoRF.png"));
 		stage.setTitle("Road Fighter FXGame | Programacion Avanzada");

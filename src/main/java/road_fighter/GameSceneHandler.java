@@ -25,8 +25,6 @@ public class GameSceneHandler extends SceneHandler {
 	private BarrelBuilder barrelBuilder;
 	private FpsInfo fpsInfo;
 
-	// TODO pause
-	// boolean paused = false;
 	boolean started = false;
 	boolean ended = false;
 

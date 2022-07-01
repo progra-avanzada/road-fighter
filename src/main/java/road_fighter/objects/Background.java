@@ -14,11 +14,9 @@ import javafx.scene.shape.Rectangle;
 public class Background extends GameObject implements Updatable, Renderable {
 	private VBox render;
 	private double posX = 0;
-//	private double posY = 0;
 
 	private final int cityWidth = Config.baseWidth;
 	private final int cityHeight = Config.baseHeight;
-//	private final int grassHeight = 100;
 
 	public Background() {
 		Image backgroundImage = new Image(
@@ -59,4 +57,16 @@ public class Background extends GameObject implements Updatable, Renderable {
 	@Override
 	public void destroy() { }
 
+
+	public double getPosX() {
+		return posX;
+	}
+
+	public int getCityWidth() {
+		return cityWidth;
+	}
+
+	public int getCityHeight() {
+		return cityHeight;
+	}
 }
